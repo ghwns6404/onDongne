@@ -1,0 +1,7 @@
+<백엔드>
+1. 필요한 패키지 설치 후 "npm start"
+
+
+<프론트엔드>
+1. 필요한 패키지 설치 후 "npm run web"
+2. \onDongne\Backend\docs\swagger.yaml 엔 API관련 명세들이 적혀있습니다

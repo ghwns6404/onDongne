@@ -1,0 +1,19 @@
+# 공통
+.DS_Store
+Thumbs.db
+
+# Node
+**/node_modules/
+**/npm-debug.log*
+**/yarn-error.log*
+
+# 환경변수
+Backend/.env
+Frontend/.env
+**/.env.local
+**/.env.development.local
+**/.env.production.local
+
+# 빌드 아티팩트(필요 시)
+**/dist/
+**/build/

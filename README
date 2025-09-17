@@ -9,7 +9,7 @@
 1. cd Backend
 2. npm install
 3. npm run dev
-4. .env파일은 git에 올라가지않음으로 직접 추가해야함.
+4. .env파일은 git에 올라가지않음으로 직접 추가해야함. (카톡게시판에 있음)
 5. CORS 이슈 발생 시: Backend/.env의 CLIENT_ORIGIN이 프론트 실제 주소(예: http://localhost:8081)와 일치하는지 확인
 → 서버 재시작
 

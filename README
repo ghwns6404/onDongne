@@ -20,3 +20,13 @@
 2. npm install
 3. npm run web
 #\onDongne\Backend\docs\swagger.yaml 엔 API관련 명세들이 적혀있습니다
+
+--------------------------------설치가 잘 안돼요----------------------------------
+1. git 설치
+2. node.js 설치
+3. 클론한 레포 터미널에서 npm install 했는데 "npm : 이 시스템에서 스크립트를 실행할 수 없으므로...자세한 내용은 about_Execution_Policies.."
+    에러 발생시 아래 문구 터미널에 입력
+     Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+4. 다시 npm install
+5. <공통>의 4번(npm run dev:all) 실행
+6. 웹페이지에 뭐라도 뜨면 성공

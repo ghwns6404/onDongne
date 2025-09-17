@@ -1,37 +1,67 @@
-// 초기 개발 단계용 인메모리 사용자 저장소
-// 아직 디비가 없어서 Map에 저장함
-// 그래서 웹이 꺼졌다 켜지면 기존 회원정보 날아감
+// 사용자 저장소: MySQL 기반 구현
+const mysql = require('mysql2/promise');
+const { mysqlConfig } = require('../config');
 
-const users = new Map(); // 키: email, 값: { id, email, name, passwordHash, createdAt }
+let pool;
 
-let nextId = 1;
-
-// 사용자 생성: 이메일이 중복이면 null 반환, 아니면 새 사용자 생성
-function createUser({ email, name, passwordHash }) {
-  if (users.has(email)) return null;
-  const user = {
-    id: String(nextId++),
-    email,
-    name,
-    passwordHash,
-    createdAt: new Date().toISOString(),
-  };
-  users.set(email, user);
-  return { ...user };
-}
-
-// 이메일로 사용자 조회
-function findByEmail(email) {
-  const user = users.get(email);
-  return user ? { ...user } : null;
-}
-
-// ID로 사용자 조회
-function findById(id) {
-  for (const user of users.values()) {
-    if (user.id === id) return { ...user };
+function getPool() {
+  if (pool) return pool;
+  if (mysqlConfig.url) {
+    pool = mysql.createPool({
+      uri: mysqlConfig.url,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+    });
+  } else {
+    pool = mysql.createPool({
+      host: mysqlConfig.host,
+      port: mysqlConfig.port,
+      user: mysqlConfig.user,
+      password: mysqlConfig.password,
+      database: mysqlConfig.database,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+    });
   }
-  return null;
+  return pool;
+}
+
+async function createUser({ email, name, passwordPlain }) {
+  const sql = 'INSERT INTO `USER` (email, password, name, `CreatedAt`) VALUES (?, ?, ?, NOW())';
+  const [result] = await getPool().execute(sql, [email, passwordPlain, name]);
+  const id = result.insertId;
+  const [rows] = await getPool().execute('SELECT id, email, name, `CreatedAt` FROM `USER` WHERE id = ?', [id]);
+  const user = rows && rows[0] ? rows[0] : null;
+  return user ? { id: String(user.id), email: user.email, name: user.name, createdAt: user.CreatedAt } : null;
+}
+
+async function findByEmail(email) {
+  const normalized = String(email || '').trim().toLowerCase();
+  const [rows] = await getPool().execute('SELECT id, email, name, password, `CreatedAt` FROM `USER` WHERE LOWER(email) = ? LIMIT 1', [normalized]);
+  if (!rows || rows.length === 0) return null;
+  const row = rows[0];
+  const passwordValue = typeof row.password === 'string' ? row.password : (row.password && row.password.toString ? row.password.toString() : '');
+  return {
+    id: String(row.id),
+    email: row.email,
+    name: row.name,
+    passwordPlain: passwordValue,
+    createdAt: row.CreatedAt || null,
+  };
+}
+
+async function findById(id) {
+  const [rows] = await getPool().execute('SELECT id, email, name, `CreatedAt` FROM `USER` WHERE id = ? LIMIT 1', [id]);
+  if (!rows || rows.length === 0) return null;
+  const row = rows[0];
+  return {
+    id: String(row.id),
+    email: row.email,
+    name: row.name,
+    createdAt: row.CreatedAt || null,
+  };
 }
 
 module.exports = {

@@ -23,22 +23,10 @@ async function login(req, res, next) {
     const result = await authService.login({ email, password });
     return res.status(200).json({ success: true, data: result });
   } catch (err) {
-    return next(err);
+    return res.status(err.status || 500).json({ success: false, error: { message: err.message || '로그인 실패' } });
   }
 }
 
-async function me(req, res, next) {
-  try {
-    const result = await authService.getMe(req.userId);
-    if (!result) {
-      return res.status(404).json({ success: false, error: { message: '사용자를 찾을 수 없습니다.' } });
-    }
-    return res.status(200).json({ success: true, data: result });
-  } catch (err) {
-    return next(err);
-  }
-}
-
-module.exports = { signup, login, me };
+module.exports = { signup, login };
 
 

@@ -18,7 +18,7 @@
 #프론트엔드만 켜기: 루트에서 npm run dev:frontend
 1. cd Frontend
 2. npm install
-3. npm run web
+3. npm run web / npm run start
 #\onDongne\Backend\docs\swagger.yaml 엔 API관련 명세들이 적혀있습니다
 
 --------------------------------설치가 잘 안돼요----------------------------------
@@ -30,3 +30,5 @@
 4. 다시 npm install
 5. <공통>의 4번(npm run dev:all) 실행
 6. 웹페이지에 뭐라도 뜨면 성공
+
+#package.json에 설치된 의존성들이 나와있습니다
